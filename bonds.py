@@ -1,3 +1,9 @@
+# bonds.py
+# author: Tony Tong (ttong1013 @github)
+# created: 6/10/2017
+# last update: 6/16/2017
+
+
 import numpy as np
 import scipy as sp
 import pandas as pd
@@ -5,21 +11,35 @@ import statsmodels.api as sm
 from scipy import interpolate
 
 
-def get_rates_from_discounts(T, Z, Tnew=np.array([]), t=0, kind='simple', k=0, order=5):
+def get_rates_from_discounts(T, Z, Tnew=np.array([]), t=0, kind='simple', k=0,
+                             order=5, ret_model=False):
     """
     Calculate the spot rates and instantaneous forward rates from discount rate curve Z
-    kind:   'simple', direct evaluation using discount curve
-            'polynomial', fit a polynomial of nth order to log discount curve
-            'Nelson-Siegel', fit Nelson-Siegel five-parameter model
-            'Svensson', fit Svensson model
+    Input:
+        T       Input time points of discount rates
+        Z       Discount rates (i.e., par = 1)
+        Tnew    New time grid points to interpolate the rates.  If Tnew is not provided,
+                original T will be used.
+        t       Current reference time (default t=0)
+        kind    'simple': direct evaluation using discount curve
+                'polynomial': fit a polynomial of nth order to log discount curve
+                'Nelson-Siegel': fit Nelson-Siegel five-parameter model
+                'Svensson': fit Svensson model
+        k       Compound frequency per year (k=0 refers to continuous compounding)
+        order   Polynomial fit order
+
+    Returns:
+        r_spot_new  Spot rates
+        r_fwd_new   Instantaneous forward rates
+
     """
 
     if kind == 'simple':  # direct evaluation of spot rate from discount curve
         # Evaluate the direct spot rates on the original time grid points from discount curve
         if k == 0:  # continuous compounding
-            r_spot = - np.log(Z) / (T - t)  # continous compounding
+            r_spot = - np.log(Z) / (T - t)  # continuous compounding
         else:  # compounding k times per year
-            r_spot = k * (Z ** (-1 / (k * (T - t))) - 1)
+            r_spot = k * (Z ** (-1 / (k * (T - t))) - 1)  # k compounding per year
 
         # Define interpolation function
         f_x = interpolate.interp1d(T, r_spot, kind='cubic', fill_value='extrapolate')
@@ -45,6 +65,7 @@ def get_rates_from_discounts(T, Z, Tnew=np.array([]), t=0, kind='simple', k=0, o
             r_fwd_new = f_x(Tnew)
 
         return r_spot_new, r_fwd_new
+
 
     if kind == 'polynomial':  # use polynomial of nth order to fit r_spot
         y = np.log(Z)
@@ -95,15 +116,20 @@ def get_rates_from_discounts(T, Z, Tnew=np.array([]), t=0, kind='simple', k=0, o
         else:
             r_fwd_new = f_x(Tnew)
 
-        return r_spot_new, r_fwd_new, model
+        if ret_model:
+            return r_spot_new, r_fwd_new, model
+        else:
+            return r_spot_new, r_fwd_new
+
 
     def func_NS_err(x, T, r_spot):
         # Unwrap the parameters
-        beta0 = x[0];
-        beta1 = x[1];
+        beta0 = x[0]
+        beta1 = x[1]
         beta2 = x[2]
-        tau1 = x[3];
+        tau1 = x[3]
         tau2 = x[4]
+        T = np.array(T)
         r_fit = beta0 + beta1 * ((1 - np.exp(-T / tau1)) / (T / tau1)) \
                 + beta2 * (((1 - np.exp(-T / tau2)) / (T / tau2)) - np.exp(-T / tau2))
         weight = 1 / T
@@ -122,10 +148,10 @@ def get_rates_from_discounts(T, Z, Tnew=np.array([]), t=0, kind='simple', k=0, o
         res = sp.optimize.minimize(func_NS_err, x0, args=(T, r_spot), method='SLSQP', options={'ftol': 1e-14})
         print(res)
         x = res.x
-        beta0 = x[0];
-        beta1 = x[1];
+        beta0 = x[0]
+        beta1 = x[1]
         beta2 = x[2]
-        tau1 = x[3];
+        tau1 = x[3]
         tau2 = x[4]
 
         if len(Tnew) == 0:  # Tnew not specified
@@ -138,29 +164,32 @@ def get_rates_from_discounts(T, Z, Tnew=np.array([]), t=0, kind='simple', k=0, o
 
         if np.isnan(r_spot_fit[0]):
             r_spot_fit[0] = r_spot[0]
-        # print(r_spot_fit[0], r_spot[0])
 
-        return r_spot_fit, r_fwd_fit, res
+        if ret_model:
+            return r_spot_fit, r_fwd_fit, res
+        else:
+            return r_spot_fit, r_fwd_fit
 
     def func_S_err(x, T, r_spot):
         # Unwrap the parameters
-        beta0 = x[0];
-        beta1 = x[1];
-        beta2 = x[2];
+        beta0 = x[0]
+        beta1 = x[1]
+        beta2 = x[2]
         beta3 = x[3]
-        tau1 = x[4];
+        tau1 = x[4]
         tau2 = x[5]
+        T = np.array(T)
         r_fit = beta0 + beta1 * ((1 - np.exp(-T / tau1)) / (T / tau1)) \
                 + beta2 * (((1 - np.exp(-T / tau1)) / (T / tau1)) - np.exp(-T / tau1)) \
                 + beta3 * (((1 - np.exp(-T / tau2)) / (T / tau2)) - np.exp(-T / tau2))
         weight = 1 / T
-        err = ((r_fit - r_spot) ** 2 * weight).sum()
+        err = np.array(((r_fit - r_spot) ** 2 * weight)).sum()
         return err
 
     if kind == 'Svensson':
         # first derive the direct spot rate from Z curve, then we perform the fit
         if k == 0:  # continuous compounding
-            r_spot = - np.log(Z) / (T - t)  # continous compounding
+            r_spot = - np.log(Z) / (T - t)  # continuous compounding
         else:  # compounding k times per year
             r_spot = k * (Z ** (-1 / (k * (T - t))) - 1)
 
@@ -169,11 +198,11 @@ def get_rates_from_discounts(T, Z, Tnew=np.array([]), t=0, kind='simple', k=0, o
         res = sp.optimize.minimize(func_S_err, x0, args=(T, r_spot), method='SLSQP', options={'ftol': 1e-15})
         print(res)
         x = res.x
-        beta0 = x[0];
-        beta1 = x[1];
-        beta2 = x[2];
+        beta0 = x[0]
+        beta1 = x[1]
+        beta2 = x[2]
         beta3 = x[3]
-        tau1 = x[4];
+        tau1 = x[4]
         tau2 = x[5]
 
         if len(Tnew) == 0:  # Tnew not specified
@@ -190,14 +219,20 @@ def get_rates_from_discounts(T, Z, Tnew=np.array([]), t=0, kind='simple', k=0, o
             r_spot_fit[0] = r_spot[0]
         # print(r_spot_fit[0], r_spot[0])
 
-        return r_spot_fit, r_fwd_fit, res
+        if ret_model:
+            return r_spot_fit, r_fwd_fit, res
+        else:
+            return r_spot_fit, r_fwd_fit
 
 
-def get_period_rates(T, r_inst, Tnew=[], period=0.25, t=0):
+
+def get_period_rates(T, r_inst, Tnew=np.array([]), period=0.25, t=0):
     """
-    Calculate the period rates from instant rates
+    Calculate the period rates from instant rates numerical integration
     For example:
     forward period rates f(t, T1, T2) from instantaneous forward rates f(t, T1)
+    Input:
+        T
     """
     from scipy import interpolate
 
@@ -214,6 +249,7 @@ def get_period_rates(T, r_inst, Tnew=[], period=0.25, t=0):
         r_period[i] = r_inst2.mean()
 
     return r_period
+
 
 
 def get_par_yield(T, r_spot, Tnew=[], k=2, t=0):
@@ -246,7 +282,7 @@ def get_par_yield(T, r_spot, Tnew=[], k=2, t=0):
         else:
             r_par2[i] = 2 * (
                 1 - (1 + r_spot2[i] / k) ** (
-                -k * (T2[i] - t))) / disc_i.sum()  # Use semi-annual compounding for spot rate
+                    -k * (T2[i] - t))) / disc_i.sum()  # Use semi-annual compounding for spot rate
             #         print('i = ', i)
             #         print(disc_i)
             #         print((1 - (1 + r_spot2[i]/k)**(-k*(T2[i]-t))))
@@ -271,7 +307,7 @@ def main():
     data0 = pd.read_excel('bonds_discount_data.xls', skiprows=0)
     T = data0['Maturity'].values
     price = data0['Price'].values
-    Z = price / 100
+    Z = price / 100  # par=100
 
     # New time grid points of 3-mo intervals
     T7 = np.r_[0:T.max():0.25]
@@ -279,9 +315,6 @@ def main():
     # Calculate spot rate and instantaneous forward rates
     r_spot, r_fwd = get_rates_from_discounts(T, Z, k=2)
     r_spot_7, r_fwd_7 = get_rates_from_discounts(T, Z, Tnew=T7, k=2)
-
-    # r_spot_sm = savitzky_golay(r_spot, 11, 3)
-    # r_fwd_sm = savitzky_golay(r_fwd, 15, 3)
 
     r_fwd_7_3mo = get_period_rates(T7, r_fwd_7, period=0.25, t=0)
     r_par_7 = get_par_yield(T7, r_spot_7, T7)
@@ -304,6 +337,6 @@ def main():
     plt.draw()
     plt.show()
 
+
 if __name__ == '__main__':
     main()
-
