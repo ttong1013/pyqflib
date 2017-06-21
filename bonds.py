@@ -309,6 +309,7 @@ def main():
     price = data0['Price'].values
     Z = price / 100  # par=100
 
+    # Q7
     # New time grid points of 3-mo intervals
     T7 = np.r_[0:T.max():0.25]
 
@@ -333,8 +334,48 @@ def main():
     plt.ylabel('Interest Rate')
     plt.ylim([0.01, 0.08])
     plt.legend(loc=0)
-
     plt.draw()
+
+    # Q8
+    r_spot_poly, r_fwd_poly = get_rates_from_discounts(T, Z, kind='polynomial', k=2)
+    T8 = np.linspace(0, 30, 61)
+    r_spot_poly_8, r_fwd_poly_8 = get_rates_from_discounts(T, Z, T8, kind='polynomial', k=2)
+    r_fwd_8_6mo = get_period_rates(T8, r_fwd_poly_8, period=0.5, t=0)
+    r_par_8 = get_par_yield(T8, r_spot_poly_8)
+
+    T8_60 = np.linspace(0, 60, 121)
+    r_spot_poly_8_60, r_fwd_poly_8_60 = get_rates_from_discounts(T, Z, T8_60, kind='polynomial', k=2)
+    r_fwd_8_6mo_60 = get_period_rates(T8_60, r_fwd_poly_8_60, period=0.5, t=0)
+    r_par_8_60 = get_par_yield(T8_60, r_spot_poly_8_60)
+
+    fig, ax = plt.subplots(1, 1, figsize=(10, 6))
+    ax.plot(T, r_spot, color='b', linewidth=3, label='Spot Rate (original)')
+    ax.plot(T8, r_spot_poly_8, color='g', linewidth=2, label='Spot rate (poly-fit 5th order)')
+    ax.plot(T8, r_fwd_poly_8, color='r', linewidth=2, label='Forward Rate (poly fit)')
+    ax.plot(T8, r_fwd_8_6mo, color='darkred', linewidth=2, linestyle='--', label='Forward Rate 6-mo (poly fit)')
+    ax.plot(T8, r_par_8, color='m', linewidth=2, label='Par Yield (poly fit)')
+    plt.xlabel('Maturity (years)')
+    plt.ylabel('Interest Rate')
+    plt.xlim([0, 30])
+    plt.ylim([0.02, 0.06])
+    plt.legend(loc=0)
+    plt.draw()
+
+    fig, ax = plt.subplots(1, 1, figsize=(10, 6))
+    ax.axvline(x=30, color='k', linestyle='--', alpha=0.3)
+    ax.plot(T, r_spot, color='b', linewidth=3, label='Spot Rate (original)')
+    ax.plot(T8_60, r_spot_poly_8_60, color='g', linewidth=2, label='Spot Rate (poly fit, extrap to 60 yrs)')
+    ax.plot(T8_60, r_fwd_poly_8_60, color='r', linewidth=2, label='Forward Rate (poly fit, extrap to 60 yrs)')
+    ax.plot(T8_60, r_fwd_8_6mo_60, color='darkred', linewidth=2, linestyle='--',
+            label='Forward Rate 6-mo (poly fit, extrap to 60 yrs)')
+    ax.plot(T8_60, r_par_8_60, color='m', linewidth=2, label='Par Yield (poly fit, extrap to 60 yrs)')
+    plt.xlabel('Maturity (years)')
+    plt.ylabel('Interest Rate')
+    plt.xlim([0, 60])
+    plt.ylim([0.02, 0.10])
+    plt.legend(loc=0)
+    plt.draw()
+
     plt.show()
 
 
