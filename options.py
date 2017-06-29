@@ -1,4 +1,4 @@
-# bonds.py
+# options.py
 # author: Tony Tong (ttong1013 @github)
 # created: 6/15/2017
 # last update: 6/23/2017
@@ -83,11 +83,12 @@ def draw_normal(size, mu=0., sigma=1., seed=42):
 
 
 def optionMC_one_step(S, K, T, sigma, r, y=0, t=0, kind='c', alpha_s=1.0, alpha_k=1.0, alpha_tot=1.0,
-                      n=2 ** 20, m=2 ** 10, subbin=False, antithetic=True,
+                      n=2 ** 20, m=2 ** 10, subbin=False, antithetic=True, controlvariate=True,
                       moment_matching=True, matching_style='log', seed=402):
     """
     Implementation of general Monte-Carlo option pricing tool with one-step configuration (path independent)
     kind:       'c' or 'C' for European call options and 'p' or 'P' for European put options
+                'logcall' for LogCall option K[ln(ST/K)]^+
     alpha_s:    control the power option features, by default equal to 1.0
     alphs_k:    control the power option features, by default equal to 1.0
     alpha_tot:  control the power option features, by default equal to 1.0
@@ -103,11 +104,11 @@ def optionMC_one_step(S, K, T, sigma, r, y=0, t=0, kind='c', alpha_s=1.0, alpha_
     subbin:     controls whether subbinning to be performed or not
 
     """
-    assert S >= 0 and K >= 0 and T >= 0 and sigma >= 0
+    #     assert S >= 0 and K >= 0 and T >= 0 and sigma >= 0
 
     mu = r - y  # drift
     mu_tilde = mu - 0.5 * sigma ** 2  # log drift
-    discount_factor = np.exp(-r * T)
+    discount_factor = np.exp(-r * (T - t))
     one_over_sqrt_n = 1.0 / np.sqrt(n)
     sigma_sqrt_T = sigma * np.sqrt(T - t)
 
@@ -152,11 +153,11 @@ def optionMC_one_step(S, K, T, sigma, r, y=0, t=0, kind='c', alpha_s=1.0, alpha_
 
     if antithetic:
         # Evaluate the ST and its antivariate
-        ST_1 = S * np.exp(mu_tilde + sigma_sqrt_T * x)
-        ST_2 = S * np.exp(mu_tilde - sigma_sqrt_T * x)
+        ST_1 = S * np.exp(mu_tilde * (T - t) + sigma_sqrt_T * x)
+        ST_2 = S * np.exp(mu_tilde * (T - t) - sigma_sqrt_T * x)
         ST = (ST_1 + ST_2) / 2
     else:
-        ST = S * np.exp(mu_tilde + sigma_sqrt_T * x)
+        ST = S * np.exp(mu_tilde * (T - t) + sigma_sqrt_T * x)
     ST_mean = ST.mean()  # Sample mean of ST
     ST_std = ST.std()  # Sample std dev of ST
     ST_mean_std = ST_std * one_over_sqrt_n  # CLT estimator of std dev of mean of ST
@@ -203,6 +204,25 @@ def optionMC_one_step(S, K, T, sigma, r, y=0, t=0, kind='c', alpha_s=1.0, alpha_
             else:
                 CT = np.amax(np.c_[(K ** alpha_k - ST ** alpha_s) ** alpha_tot, np.zeros(ST.shape)],
                              axis=1)  # Standard European Call payoff
+
+    elif kind.lower() == 'logcall':
+        if antithetic == True:
+            CT_1 = np.amax(np.c_[K * np.log(ST_1 / K), np.zeros(ST.shape)], axis=1)  # LogCall payoff
+            CT_2 = np.amax(np.c_[K * np.log(ST_2 / K), np.zeros(ST.shape)], axis=1)  # LogCall payoff
+            CT = (CT_1 + CT_2) / 2
+        else:  # antithetic==False
+            CT = np.amax(np.c_[K * np.log(ST / K), np.zeros(ST.shape)], axis=1)  # LogCall payoff
+
+        if controlvariate == True:
+            if antithetic:
+                CT_1_vc = np.amax(np.c_[ST_1 - K, np.zeros(ST.shape)], axis=1)  # Standard European Call payoff
+                CT_2_vc = np.amax(np.c_[ST_2 - K, np.zeros(ST.shape)],
+                                  axis=1)  # Standard European Call payoff, antithetic
+                CT_vc = (CT_1_vc + CT_2_vc) / 2
+            else:  # antithetic==False
+                CT_vc = np.amax(np.c_[ST - K, np.zeros(ST.shape)], axis=1)  # Standard European Call payoff
+
+            CT = CT - CT_vc + BSM(S=S, K=K, T=T, sigma=sigma, r=r, y=y, t=t, kind='c', ret='option') / discount_factor
 
     ## C represents general derivitive with a payoff function
     # Time T payoff stats
