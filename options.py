@@ -305,14 +305,14 @@ def MC_eval(func, S, K, T, sigma, r, y=0, t=0, kind='c', n_start=5, n_end=20, su
 def test_wrapper2(func=optionMC_one_step, S=100., K=110., T=1., sigma=0.16,
                   r=0.1, y=0.0, kind='c', t=0, n_start=5, n_end=20, subbin=True,
                   antithetic=True, moment_matching=True, matching_style='log',
-                  seed=42, title=''):
+                  rep=10, seed=42, title=''):
     # Calculate the exact values of ST and Ct
     ST_true = S * np.exp((r - y) * (T-t))
     Ct_true = BSM(S=S, K=K, T=T, sigma=sigma, r=r, y=y, kind=kind)
 
     total_df = MC_eval(func, S=S, K=K, T=T, sigma=sigma,
                        r=r, y=y, kind=kind, n_start=n_start, n_end=n_end, subbin=True, antithetic=antithetic,
-                       moment_matching=moment_matching, matching_style=matching_style, rep=30, seed=seed)
+                       moment_matching=moment_matching, matching_style=matching_style, rep=rep, seed=seed)
 
     lg_n = np.log10(total_df['n'].values)
     lg_ST_abs_err = np.log10(np.abs(total_df['ST_mean'].values - ST_true))
@@ -361,30 +361,31 @@ def test_wrapper2(func=optionMC_one_step, S=100., K=110., T=1., sigma=0.16,
 
 def grouped_test2():
     # CLT Est Std Err vs Realized Std Err
+    rep = 20
     summary = test_wrapper2(func=optionMC_one_step, S=100., K=100., T=1., sigma=0.2,
                             r=0.01, y=0.02, kind='c', n_start=4, n_end=20, subbin=True,
-                            antithetic=False, moment_matching=False, seed=400,
+                            antithetic=False, moment_matching=False, rep=rep, seed=400,
                             title='BBMC (MM off; AV off)')
 
     summary = test_wrapper2(func=optionMC_one_step, S=100., K=100., T=1., sigma=0.2,
                             r=0.01, y=0.02, kind='c', n_start=4, n_end=20, subbin=True,
-                            antithetic=True, moment_matching=False, seed=400,
+                            antithetic=True, moment_matching=False, rep=rep, seed=400,
                             title='AMC(MM off; AV on)')
 
     summary = test_wrapper2(func=optionMC_one_step, S=100., K=100., T=1., sigma=0.2,
                             r=0.01, y=0.02, kind='c', n_start=4, n_end=20, subbin=True,
-                            antithetic=False, moment_matching=True, matching_style='log', seed=400,
-                            title='MMMC (MM (log) on; AV off)')
+                            antithetic=False, moment_matching=True, matching_style='log',
+                            rep=rep, seed=400, title='MMMC (MM (log) on; AV off)')
 
     summary = test_wrapper2(func=optionMC_one_step, S=100., K=100., T=1., sigma=0.2,
                             r=0.01, y=0.02, kind='c', n_start=4, n_end=20, subbin=True,
-                            antithetic=False, moment_matching=True, matching_style='exp', seed=400,
-                            title='MMMC (MM (exp) on; AV off)')
+                            antithetic=False, moment_matching=True, matching_style='exp',
+                            rep=rep, seed=400, title='MMMC (MM (exp) on; AV off)')
 
     summary = test_wrapper2(func=optionMC_one_step, S=100., K=100., T=1., sigma=0.2,
                             r=0.01, y=0.02, kind='c', n_start=4, n_end=20, subbin=True,
-                            antithetic=True, moment_matching=True, matching_style='log', seed=400,
-                            title='AMMMC (MM (log) on; AV on)')
+                            antithetic=True, moment_matching=True, matching_style='log',
+                            rep=rep, seed=400, title='AMMMC (MM (log) on; AV on)')
 
 
 def main():

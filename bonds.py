@@ -9,6 +9,8 @@ import scipy as sp
 import pandas as pd
 import statsmodels.api as sm
 from scipy import interpolate
+import matplotlib.pyplot as plt
+import matplotlib as mpl
 
 
 def get_rates_from_discounts(T, Z, Tnew=np.array([]), t=0, kind='simple', k=0,
@@ -302,8 +304,6 @@ def get_par_yield(T, r_spot, Tnew=[], k=2, t=0):
 
 def main():
     """Perform test functions"""
-    import matplotlib.pyplot as plt
-
     data0 = pd.read_excel('bonds_discount_data.xls', skiprows=0)
     T = data0['Maturity'].values
     price = data0['Price'].values
@@ -375,7 +375,6 @@ def main():
     plt.ylim([0.02, 0.10])
     plt.legend(loc=0)
     plt.draw()
-
     plt.show()
 
 
