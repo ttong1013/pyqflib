@@ -1,7 +1,8 @@
 # options.py
 # author: Tony Tong (ttong1013 @github)
 # created: 6/15/2017
-# last update: 6/23/2017
+# last update: 6/29/2017
+#
 import numpy as np
 from scipy.stats import norm
 import statsmodels.api as sm
@@ -48,6 +49,7 @@ def BSM(S, K, T, sigma, r, y=0, t=0, kind='c', ret='option'):
 def BSM_Delta(S, K, T, sigma, r, y=0, t=0, kind='c', ret='option'):
     """
     Evaluate the Delta with respect to S and K using analytical expressions
+    Function can also take vectorized input, however, their dimensions need to match
     """
     assert kind.lower() == 'c' or kind.lower() == 'p', \
         "Option type is wrong, only 'C' or 'P' is allowed"
@@ -59,11 +61,11 @@ def BSM_Delta(S, K, T, sigma, r, y=0, t=0, kind='c', ret='option'):
     x2 = (np.log(S / K) + (r - y) * (T - t)) / sigma_rt - sigma_rt / 2  # x-
 
     if kind.lower() == 'c':
-        Delta_wrt_S = np.exp(-y * (T-t)) * N(x1)
-        Delta_wrt_K = -np.exp(-r * (T-t)) * N(x2)
+        Delta_wrt_S = np.exp(-y * (T - t)) * N(x1)
+        Delta_wrt_K = -np.exp(-r * (T - t)) * N(x2)
     elif kind.lower() == 'p':
-        Delta_wrt_S = -np.exp(-y * (T-t)) * N(-x1)
-        Delta_wrt_K = np.exp(-r * (T-t)) * N(-x2)
+        Delta_wrt_S = -np.exp(-y * (T - t)) * N(-x1)
+        Delta_wrt_K = np.exp(-r * (T - t)) * N(-x2)
     else:
         Delta_wrt_S = np.nan
         Delta_wrt_K = np.nan
@@ -71,40 +73,49 @@ def BSM_Delta(S, K, T, sigma, r, y=0, t=0, kind='c', ret='option'):
 
 
 def draw_uniform(size, low=0., high=1., seed=42):
-    """Draw uniformly distributed random numbers"""
+    """
+    Draw uniformly distributed random numbers
+    It is critical a new seed is provided to draw different results
+    """
     np.random.seed(seed)
     return np.random.uniform(low, high, size)
 
 
 def draw_normal(size, mu=0., sigma=1., seed=42):
-    """Draw normally distribtued random numbers"""
+    """
+    Draw normally distributed random numbers
+    It is critical a new seed is provided to draw different results
+    """
     np.random.seed(seed)
     return np.random.normal(loc=mu, scale=sigma, size=size)
 
 
 def optionMC_one_step(S, K, T, sigma, r, y=0, t=0, kind='c', alpha_s=1.0, alpha_k=1.0, alpha_tot=1.0,
-                      n=2 ** 20, m=2 ** 10, subbin=False, antithetic=True, controlvariate=True,
+                      n=2**20, m=2**10, subbin=False, antithetic=True, controlvariate=False,
                       moment_matching=True, matching_style='log', seed=402):
     """
     Implementation of general Monte-Carlo option pricing tool with one-step configuration (path independent)
-    kind:       'c' or 'C' for European call options and 'p' or 'P' for European put options
-                'logcall' for LogCall option K[ln(ST/K)]^+
-    alpha_s:    control the power option features, by default equal to 1.0
-    alphs_k:    control the power option features, by default equal to 1.0
-    alpha_tot:  control the power option features, by default equal to 1.0
-                General power option payoff:
-                C_T = max[(S**alpha_s - K**alpha_k)**alpha_tot, 0]
-                P_T = max[(K**alpha_k - S**alpha_s)**alpha_tot, 0]
-    antithetic: turn anti-thetic variate option on (True) or off (False)
-    moment_matching:  turn moment_matching option on (True) or off (False)
-    matching_style:   'log' match the 1st and 2nd log moments
-                      'exp' match the 1st and 2nd exponential (true) moments
-    n:          number of discrete sampling
-    m:          size of sub-bins
-    subbin:     controls whether subbinning to be performed or not
+    Method does NOT support vectorized operation.
+    kind:               'c' or 'C' for European call options
+                        'p' or 'P' for European put options
+                        'logcall' for LogCall option K[ln(ST/K)]^+
+    alpha_s:            (Default 1.0)control the power option features. Power over S_T
+    alphs_k:            (Default 1.0)control the power option features. Power over K
+    alpha_tot:          (Default 1.0)control the power option features. Overall power.
+                        General power option payoff can be expressed as:
+                        C_T = max[(S**alpha_s - K**alpha_k)**alpha_tot, 0]
+                        P_T = max[(K**alpha_k - S**alpha_s)**alpha_tot, 0]
+                        European options have alpha_s=1.0, alpha_k=1.0, alpha_tot=1.0
+    antithetic:         (Default True) turn anti-thetic variate option on (True) or off (False)
+    moment_matching:    (Default True) turn moment_matching option on (True) or off (False)
+    matching_style:     'log' (Default) match the 1st and 2nd log moments
+                        'exp' match the 1st and 2nd exponential (true) moments
+    n:                  number of discrete sampling
+    m:                  size of sub-bins
+    subbin:             (Default False)controls whether subbinning to be performed or not
 
     """
-    #     assert S >= 0 and K >= 0 and T >= 0 and sigma >= 0
+    assert S >= 0 and K >= 0 and T >= 0 and sigma >= 0
 
     mu = r - y  # drift
     mu_tilde = mu - 0.5 * sigma ** 2  # log drift
@@ -125,7 +136,8 @@ def optionMC_one_step(S, K, T, sigma, r, y=0, t=0, kind='c', alpha_s=1.0, alpha_
 
             def f(b):  # define a nested function to find b such that f=0
                 return (np.exp(2 * b * sigma_sqrt_T * x)).mean() / (
-                                                                   (np.exp(b * sigma_sqrt_T * x)).mean()) ** 2 - np.exp(
+                                                                       (np.exp(
+                                                                           b * sigma_sqrt_T * x)).mean()) ** 2 - np.exp(
                     sigma_sqrt_T ** 2)
 
             def derivative(f, x, accuracy):
@@ -158,6 +170,7 @@ def optionMC_one_step(S, K, T, sigma, r, y=0, t=0, kind='c', alpha_s=1.0, alpha_
         ST = (ST_1 + ST_2) / 2
     else:
         ST = S * np.exp(mu_tilde * (T - t) + sigma_sqrt_T * x)
+        ST_1 = ST_2 = ST
     ST_mean = ST.mean()  # Sample mean of ST
     ST_std = ST.std()  # Sample std dev of ST
     ST_mean_std = ST_std * one_over_sqrt_n  # CLT estimator of std dev of mean of ST
@@ -168,7 +181,7 @@ def optionMC_one_step(S, K, T, sigma, r, y=0, t=0, kind='c', alpha_s=1.0, alpha_
         flag_power_option = True
 
     if kind.lower() == 'c':
-        if flag_power_option == False:  # regular option
+        if not flag_power_option:  # regular option
             if antithetic:
                 CT_1 = np.amax(np.c_[ST_1 - K, np.zeros(ST.shape)], axis=1)  # Standard European Call payoff
                 CT_2 = np.amax(np.c_[ST_2 - K, np.zeros(ST.shape)], axis=1)  # Standard European Call payoff, antithetic
@@ -187,7 +200,7 @@ def optionMC_one_step(S, K, T, sigma, r, y=0, t=0, kind='c', alpha_s=1.0, alpha_
                              axis=1)  # Standard European Call payoff
 
     elif kind.lower() == 'p':
-        if flag_power_option == False:  # regular option
+        if not flag_power_option:  # regular option
             if antithetic:
                 CT_1 = np.amax(np.c_[K - ST_1, np.zeros(ST.shape)], axis=1)  # Standard European Put payoff
                 CT_2 = np.amax(np.c_[K - ST_2, np.zeros(ST.shape)], axis=1)  # Standard European Put payoff, antithetic
@@ -206,14 +219,14 @@ def optionMC_one_step(S, K, T, sigma, r, y=0, t=0, kind='c', alpha_s=1.0, alpha_
                              axis=1)  # Standard European Call payoff
 
     elif kind.lower() == 'logcall':
-        if antithetic == True:
+        if antithetic:
             CT_1 = np.amax(np.c_[K * np.log(ST_1 / K), np.zeros(ST.shape)], axis=1)  # LogCall payoff
             CT_2 = np.amax(np.c_[K * np.log(ST_2 / K), np.zeros(ST.shape)], axis=1)  # LogCall payoff
             CT = (CT_1 + CT_2) / 2
         else:  # antithetic==False
             CT = np.amax(np.c_[K * np.log(ST / K), np.zeros(ST.shape)], axis=1)  # LogCall payoff
 
-        if controlvariate == True:
+        if controlvariate:
             if antithetic:
                 CT_1_vc = np.amax(np.c_[ST_1 - K, np.zeros(ST.shape)], axis=1)  # Standard European Call payoff
                 CT_2_vc = np.amax(np.c_[ST_2 - K, np.zeros(ST.shape)],
@@ -221,20 +234,20 @@ def optionMC_one_step(S, K, T, sigma, r, y=0, t=0, kind='c', alpha_s=1.0, alpha_
                 CT_vc = (CT_1_vc + CT_2_vc) / 2
             else:  # antithetic==False
                 CT_vc = np.amax(np.c_[ST - K, np.zeros(ST.shape)], axis=1)  # Standard European Call payoff
-
-            CT = CT - CT_vc + BSM(S=S, K=K, T=T, sigma=sigma, r=r, y=y, t=t, kind='c', ret='option') / discount_factor
+            CT = CT - CT_vc + BSM(S=S, K=K, T=T, sigma=sigma, r=r, y=y, t=t, kind='c',
+                                  ret='option') / discount_factor
 
     ## C represents general derivitive with a payoff function
     # Time T payoff stats
     CT_mean = CT.mean()
     CT_std = CT.std()
-    CT_mean_std = CT_std * one_over_sqrt_n
+    CT_mean_std = CT_std * one_over_sqrt_n  # by CLT estimate
 
     # Time t payoff stats
     Ct_mean = CT_mean * discount_factor
-    Ct_mean_std = CT_mean_std * discount_factor
+    Ct_mean_std = CT_mean_std * discount_factor  # by CLT estimate
 
-    if subbin == True and n > m:
+    if subbin and n > m:
         k = int(n / m)
         ST_mean_std_star = ST[0:k * m].reshape((-1, m)).mean(axis=1).std() / np.sqrt(k)
         CT_mean_std_star = CT[0:k * m].reshape((-1, m)).mean(axis=1).std() / np.sqrt(k)
@@ -242,24 +255,23 @@ def optionMC_one_step(S, K, T, sigma, r, y=0, t=0, kind='c', alpha_s=1.0, alpha_
     else:
         Ct_mean_std_star = CT_mean_std_star = ST_mean_std_star = np.nan
 
-    return Ct_mean, Ct_mean_std, Ct_mean_std_star, CT_mean, CT_mean_std, \
-           CT_mean_std_star, ST_mean, ST_mean_std, ST_mean_std_star
+    if subbin:
+        return Ct_mean, Ct_mean_std, Ct_mean_std_star, CT_mean, CT_mean_std, \
+               CT_mean_std_star, ST_mean, ST_mean_std, ST_mean_std_star
+    else:
+        return Ct_mean, Ct_mean_std, CT_mean, CT_mean_std, ST_mean, ST_mean_std
 
 
 def MC_eval(func, S, K, T, sigma, r, y=0, t=0, kind='c', n_start=5, n_end=20, subbin=True,
             antithetic=True, moment_matching=True, matching_style='log', rep=1, seed=42):
     from time import time
-    import numba as nb
 
     np.random.seed(seed)
-    #     func = BBMC_one_step
-    #     S=100.; K=120.; T=1.; sigma=0.16; r=0.1; y=0.0
-    #     kind='c'
     n_list = [2 ** i for i in range(n_start, n_end + 1)]
     output = []
     for n in n_list:
         output_i = []
-        for kk in range(rep):
+        for kk in range(rep):   # Repeat the core function 'rep' times to evaluate the realized std err
             t0 = time()
             output_kk = func(
                 S, K, T, sigma, r, y, kind=kind, n=n, subbin=subbin, antithetic=antithetic,
@@ -291,10 +303,11 @@ def MC_eval(func, S, K, T, sigma, r, y=0, t=0, kind='c', n_start=5, n_end=20, su
 
 
 def test_wrapper2(func=optionMC_one_step, S=100., K=110., T=1., sigma=0.16,
-                  r=0.1, y=0.0, kind='c', n_start=5, n_end=20, subbin=True, antithetic=True,
-                  moment_matching=True, matching_style='log', seed=42, title=''):
+                  r=0.1, y=0.0, kind='c', t=0, n_start=5, n_end=20, subbin=True,
+                  antithetic=True, moment_matching=True, matching_style='log',
+                  seed=42, title=''):
     # Calculate the exact values of ST and Ct
-    ST_true = S * np.exp((r - y) * T)
+    ST_true = S * np.exp((r - y) * (T-t))
     Ct_true = BSM(S=S, K=K, T=T, sigma=sigma, r=r, y=y, kind=kind)
 
     total_df = MC_eval(func, S=S, K=K, T=T, sigma=sigma,
@@ -377,6 +390,7 @@ def grouped_test2():
 def main():
     grouped_test2()
     plt.show()
+
 
 if __name__ == '__main__':
     main()
