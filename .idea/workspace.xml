@@ -2,9 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e36d1a8d-1f27-4a50-9426-2397dead2756" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/hullwhite.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/options.py" afterPath="$PROJECT_DIR$/options.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -18,7 +17,7 @@
       <file leaf-file-name="bonds.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/bonds.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="300">
+            <state relative-caret-position="150">
               <caret line="12" column="24" lean-forward="false" selection-start-line="12" selection-start-column="24" selection-end-line="12" selection-end-column="24" />
               <folding>
                 <element signature="e#99#117#0" expanded="true" />
@@ -27,11 +26,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="hullwhite.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="hullwhite.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/hullwhite.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1233">
-              <caret line="415" column="0" lean-forward="true" selection-start-line="415" selection-start-column="0" selection-end-line="415" selection-end-column="0" />
+            <state relative-caret-position="9575">
+              <caret line="390" column="9" lean-forward="false" selection-start-line="390" selection-start-column="9" selection-end-line="390" selection-end-column="9" />
               <folding>
                 <element signature="e#1#20#0" expanded="true" />
               </folding>
@@ -39,14 +38,24 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="options.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="options.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/options.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="770">
-              <caret line="397" column="0" lean-forward="false" selection-start-line="397" selection-start-column="0" selection-end-line="397" selection-end-column="0" />
+            <state relative-caret-position="87">
+              <caret line="759" column="0" lean-forward="true" selection-start-line="759" selection-start-column="0" selection-end-line="759" selection-end-column="0" />
               <folding>
                 <element signature="e#101#119#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="dataflow.py" pinned="false" current-in-tab="false">
+        <entry file="file://C:/Anaconda3/envs/tf-env/Lib/site-packages/numba/dataflow.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1975">
+              <caret line="86" column="0" lean-forward="false" selection-start-line="86" selection-start-column="0" selection-end-line="86" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -65,13 +74,15 @@
       <find>optimize</find>
       <find>siegel</find>
       <find>show</find>
-      <find>T</find>
       <find>r_space</find>
       <find>get_theta</find>
       <find>show()</find>
+      <find>deltaT</find>
+      <find>T</find>
     </findStrings>
     <replaceStrings>
       <replace>r</replace>
+      <replace>delta_t</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -80,17 +91,17 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/options.py" />
         <option value="$PROJECT_DIR$/bonds.py" />
         <option value="$PROJECT_DIR$/hullwhite.py" />
+        <option value="$PROJECT_DIR$/options.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds">
-    <option name="x" value="671" />
-    <option name="y" value="48" />
-    <option name="width" value="2419" />
-    <option name="height" value="1977" />
+  <component name="ProjectFrameBounds" extendedState="1">
+    <option name="x" value="1020" />
+    <option name="y" value="2" />
+    <option name="width" value="2795" />
+    <option name="height" value="2102" />
   </component>
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
@@ -110,8 +121,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
-      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -123,6 +132,8 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -140,7 +151,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.hullwhite">
+  <component name="RunManager" selected="Python.options">
     <configuration name="Nosetests in hullwhite.py" type="tests" factoryName="Nosetests" temporary="true" nameIsGenerated="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -231,9 +242,9 @@
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="Python.hullwhite" />
-        <item index="1" class="java.lang.String" itemvalue="Python tests.Nosetests in hullwhite.py" />
-        <item index="2" class="java.lang.String" itemvalue="Python.options" />
+        <item index="0" class="java.lang.String" itemvalue="Python.options" />
+        <item index="1" class="java.lang.String" itemvalue="Python.hullwhite" />
+        <item index="2" class="java.lang.String" itemvalue="Python tests.Nosetests in hullwhite.py" />
         <item index="3" class="java.lang.String" itemvalue="Python tests.Nosetests in options.py" />
         <item index="4" class="java.lang.String" itemvalue="Python.bonds" />
       </list>
@@ -297,20 +308,20 @@
     </history-entry>
   </component>
   <component name="ToolWindowManager">
-    <frame x="671" y="48" width="2419" height="1977" extended-state="0" />
+    <frame x="1020" y="2" width="2795" height="2102" extended-state="1" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16645807" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.14388749" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19823302" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.44214877" sideWeight="0.5012622" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.44214877" sideWeight="0.49873784" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.368857" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.20817688" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3786157" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.09123693" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -329,11 +340,79 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="4" />
+      <option name="time" value="12" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/bonds.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="12" column="24" lean-forward="false" selection-start-line="12" selection-start-column="24" selection-end-line="12" selection-end-column="24" />
+          <folding>
+            <element signature="e#99#117#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hullwhite.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="9575">
+          <caret line="390" column="9" lean-forward="false" selection-start-line="390" selection-start-column="9" selection-end-line="390" selection-end-column="9" />
+          <folding>
+            <element signature="e#1#20#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Anaconda3/envs/tf-env/Lib/site-packages/numba/dataflow.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1975">
+          <caret line="86" column="0" lean-forward="false" selection-start-line="86" selection-start-column="0" selection-end-line="86" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/options.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17825">
+          <caret line="713" column="17" lean-forward="true" selection-start-line="713" selection-start-column="17" selection-end-line="713" selection-end-column="17" />
+          <folding>
+            <element signature="e#101#119#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bonds.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="12" column="24" lean-forward="false" selection-start-line="12" selection-start-column="24" selection-end-line="12" selection-end-column="24" />
+          <folding>
+            <element signature="e#99#117#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hullwhite.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="10200">
+          <caret line="415" column="0" lean-forward="true" selection-start-line="415" selection-start-column="0" selection-end-line="415" selection-end-column="0" />
+          <folding>
+            <element signature="e#1#20#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/options.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="9825">
+          <caret line="397" column="0" lean-forward="false" selection-start-line="397" selection-start-column="0" selection-end-line="397" selection-end-column="0" />
+          <folding>
+            <element signature="e#101#119#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/bonds.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -483,7 +562,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/bonds.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
+        <state relative-caret-position="150">
           <caret line="12" column="24" lean-forward="false" selection-start-line="12" selection-start-column="24" selection-end-line="12" selection-end-column="24" />
           <folding>
             <element signature="e#99#117#0" expanded="true" />
@@ -491,22 +570,30 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/options.py">
+    <entry file="file://$PROJECT_DIR$/hullwhite.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="770">
-          <caret line="397" column="0" lean-forward="false" selection-start-line="397" selection-start-column="0" selection-end-line="397" selection-end-column="0" />
+        <state relative-caret-position="9575">
+          <caret line="390" column="9" lean-forward="false" selection-start-line="390" selection-start-column="9" selection-end-line="390" selection-end-column="9" />
           <folding>
-            <element signature="e#101#119#0" expanded="true" />
+            <element signature="e#1#20#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/hullwhite.py">
+    <entry file="file://C:/Anaconda3/envs/tf-env/Lib/site-packages/numba/dataflow.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1233">
-          <caret line="415" column="0" lean-forward="true" selection-start-line="415" selection-start-column="0" selection-end-line="415" selection-end-column="0" />
+        <state relative-caret-position="1975">
+          <caret line="86" column="0" lean-forward="false" selection-start-line="86" selection-start-column="0" selection-end-line="86" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/options.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="87">
+          <caret line="759" column="0" lean-forward="true" selection-start-line="759" selection-start-column="0" selection-end-line="759" selection-end-column="0" />
           <folding>
-            <element signature="e#1#20#0" expanded="true" />
+            <element signature="e#101#119#0" expanded="true" />
           </folding>
         </state>
       </provider>
